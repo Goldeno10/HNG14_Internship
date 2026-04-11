@@ -1,9 +1,9 @@
 # HNG Stage 0 - Name Classifier API
 A simple, high-performance API built for the HNG Internship Backend Track (Stage 0). This service integrates with the Genderize.io API to classify names by gender, providing confidence scores and metadata.
-## 🚀 Live Demo- **API Base URL:** [https://vercel.app](https://vercel.app)
+## 🚀 Live Demo- **API Base URL:** [base_url](https://hng-14-internship.vercel.app/)
 - **Endpoint:** `/api/classify?name=john`
 ## 🛠️ Tech Stack- **Framework:** [Next.js](https://nextjs.org) (App Router)- **Language:** TypeScript
-- **Deployment:** [Vercel](https://vercel.com)
+- **Deployment:** [Vercel](https://hng-14-internship.vercel.app/)
 - **External API:** [Genderize.io](https://genderize.io)
 ## 📖 API Documentation### 1. Classify NameReturns gender prediction and confidence metrics for a given name.
 
