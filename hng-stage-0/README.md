@@ -46,7 +46,7 @@ Error Responses:
 
    1. Clone the repo:
    
-   git clone https://github.com
+   git clone https://https://github.com/Goldeno10/HNG14_Internship
    cd hng-stage-0
    
    2. Install dependencies:
