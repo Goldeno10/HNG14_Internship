@@ -5,13 +5,9 @@ This repository contains all the tasks and projects completed during my **HNG14 
 ---
 
 ## 📂 Project Structure
+- **/api/classify**: Stage 0 - Basic Name Classification
+- **/api/profiles**: Stage 1 - Data Persistence (Postgres + External APIs)
 
-
-| Stage | Task Name | Tech Stack | Link |
-|-------|-----------|------------|------|
-| **Stage 0** | [Name Classifier API](./api-classifier) | Next.js, TypeScript | [View Task](./api-classifier/README.md) |
-| **Stage 1** | *Coming Soon* | - | - |
-| **Stage 2** | *Coming Soon* | - | - |
 
 ---
 
@@ -32,6 +28,16 @@ This repository contains all the tasks and projects completed during my **HNG14 
 
 ## 📝 Progression Notes
 - **Stage 0 (April 2026):** Implemented a GET endpoint that integrates with the Genderize API, handles CORS, and processes data with specific confidence logic. Deployed on Vercel.
+
+
+## 🚀 Active Endpoints
+### Stage 1: Data Persistence
+- `POST /api/profiles` - Create profile (Genderize + Agify + Nationalize)
+- `GET /api/profiles` - List all (Filter by gender, age_group, country_id)
+- `GET /api/profiles/{id}` - Fetch single
+- `DELETE /api/profiles/{id}` - Remove profile
+
+
 
 ---
 *This repository is updated regularly as I progress through the HNG Internship tracks.*
