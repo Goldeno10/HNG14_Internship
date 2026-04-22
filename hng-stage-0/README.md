@@ -1,66 +1,41 @@
-# HNG Stage 0 - Name Classifier API
-A simple, high-performance API built for the HNG Internship Backend Track (Stage 0). This service integrates with the Genderize.io API to classify names by gender, providing confidence scores and metadata.
-## 🚀 Live Demo- **API Base URL:** [base_url](https://hng-14-internship.vercel.app/)
-- **Endpoint:** `/api/classify?name=john`
+Here is the updated README. I’ve consolidated Stage 0 and Stage 1 since they are in the same project, and updated the technical details to reflect your move to Upstash Redis.
+
+# HNG14 Internship - Backend Track (Stage 0 & 1)
+This repository contains the API services built for the HNG Internship. It includes a name classifier (Stage 0) and a persistent profile management system (Stage 1).
+## 🚀 Live Demo- **API Base URL:** [https://hng-14-internship.vercel.app](https://hng-14-internship.vercel.app)
+- **Stage 0 Endpoint:** `/api/classify?name=john`
+- **Stage 1 Endpoint:** `/api/profiles`
 ## 🛠️ Tech Stack- **Framework:** [Next.js](https://nextjs.org) (App Router)- **Language:** TypeScript
-- **Deployment:** [Vercel](https://hng-14-internship.vercel.app/)
-- **External API:** [Genderize.io](https://genderize.io)
-## 📖 API Documentation### 1. Classify NameReturns gender prediction and confidence metrics for a given name.
-
-**Endpoint:** `GET /api/classify?name={name}`
-
-**Query Parameters:**
-
-| Parameter | Type   | Required | Description |
-|-----------|--------|----------|-------------|
-| `name`    | string | Yes      | The name to classify |
-
-**Success Response (200 OK):**
-```json
- {
-   "status": "success",
-   "data": {
-     "name": "john",
-     "gender": "male",
-     "probability": 0.99,
-     "sample_size": 1234,
-     "is_confident": true,
-     "processed_at": "2026-04-01T12:00:00Z"
-   }
- }
-
-Error Responses:
-
-* 400 Bad Request: Missing or empty name parameter.
-* 422 Unprocessable Entity: Name is not a valid string.
-* 200 OK (Logic Error): No prediction available for the provided name.
-
-## ⚙️ Features
-
-* CORS Enabled: Supports Access-Control-Allow-Origin: * for cross-origin grading scripts.
-* Strict Validation: Handles missing, empty, or invalid name parameters.
-* Confidence Logic: Determines is_confident based on a probability ≥ 0.7 AND a sample size ≥ 100.
-* Fast Response: Optimized for sub-500ms processing.
-
-## 💻 Local Setup
-
-   1. Clone the repo:
-   
-   git clone https://https://github.com/Goldeno10/HNG14_Internship
+- **Database:** [Upstash Redis](https://upstash.com) (NoSQL Persistence)
+- **Deployment:** [Vercel](https://vercel.com)- **External APIs:** Genderize.io, Agify.io, Nationalize.io
+## 📖 API Documentation### 1. Classify Name (Stage 0)**Endpoint:** `GET /api/classify?name={name}`
+Returns gender prediction and confidence metrics.
+### 2. Create Profile (Stage 1)**Endpoint:** `POST /api/profiles`
+**Body:** `{ "name": "ella" }`
+Integrates with 3 APIs, applies age/nationality logic, and persists data to Redis.
+### 3. Get All Profiles (Stage 1)**Endpoint:** `GET /api/profiles`
+**Filters:** `?gender=male&country_id=NG&age_group=adult`
+### 4. Single Profile Actions (Stage 1)**Endpoints:** 
+- `GET /api/profiles/{id}`
+- `DELETE /api/profiles/{id}`
+## ⚙️ Features- **Data Persistence:** Uses Redis for fast, reliable data storage on Vercel.- **UUID v7:** All stored profiles use the version 7 UUID standard.
+- **CORS Enabled:** Supports `Access-Control-Allow-Origin: *` for automated grading.- **Error Handling:** Implements strict validation (400, 422, 404) and upstream failure (502) reporting.
+## 💻 Local Setup1. **Clone the repo:**
+   ```bash
+   git clone https://github.com
    cd hng-stage-0
+
+
+   1. Environment Variables:
+   Create a .env.local file with your Upstash credentials:
    
-   2. Install dependencies:
+   UPSTASH_REDIS_REST_URL="your_url"
+   UPSTASH_REDIS_REST_TOKEN="your_token"
+   
+   2. Install & Run:
    
    npm install
-   
-   3. Run development server:
-   
    npm run dev
    
-   The API will be available at http://localhost:3000/api/classify?name=peter.
-
-## 📄 License
-MIT
-
-
+   
 
