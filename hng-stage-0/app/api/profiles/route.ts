@@ -57,6 +57,9 @@ export async function GET(request: Request) {
 
   } catch (error) {
     console.error("Query Error:", error);
-    return NextResponse.json({ status: "error", message: "Invalid query parameters" }, { status: 400, headers: corsHeaders });
-  }
+    return NextResponse.json({ 
+      status: "error", 
+      message: error instanceof Error ? error.message : "Server failure" 
+  }, { status: 500, headers: corsHeaders });
+}
 }

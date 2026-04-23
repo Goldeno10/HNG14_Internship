@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     if (filters.gender) where.gender = filters.gender;
     if (filters.age_group) where.age_group = filters.age_group;
     if (filters.country_id) where.country_id = filters.country_id;
-    
+
     if (filters.min_age || filters.max_age) {
       where.age = {};
       if (filters.min_age) where.age.gte = parseInt(filters.min_age);
@@ -38,6 +38,10 @@ export async function GET(request: Request) {
     }, { headers: corsHeaders });
 
   } catch (error) {
-    return NextResponse.json({ status: "error", message: "Server failure" }, { status: 500, headers: corsHeaders });
+    console.error("Search error:", error);
+    return NextResponse.json({
+      status: "error",
+      message: error instanceof Error ? error.message : String(error)
+    }, { status: 500, headers: corsHeaders });
   }
 }
