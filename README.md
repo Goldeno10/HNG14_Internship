@@ -1,49 +1,103 @@
-Here is your cleaned-up root README.md. I’ve merged the overlapping sections and ensured the tech stack correctly reflects your move to Upstash Redis.
-
 # HNG14 Internship - Backend Track 🚀
-This repository contains all the tasks and projects completed during my **HNG14 Backend Internship**. Each directory represents a specific stage of the program.
----## 📂 Project Structure- **/hng-stage-0**: The main Next.js application containing:
-  - `GET /api/classify`: Stage 0 - Basic Name Classification.
-  - `/api/profiles`: Stage 1 - Data Persistence & API Design.
----## 🚀 Active Endpoints### Stage 0: Name Classifier- `GET /api/classify?name={name}` - Returns gender and confidence metrics.
-### Stage 1: Data Persistence (Upstash Redis)- `POST /api/profiles` - Create profile (Genderize + Agify + Nationalize integration).
-- `GET /api/profiles` - List all profiles (Supports filters: `gender`, `age_group`, `country_id`).
-- `GET /api/profiles/{id}` - Fetch a single profile by UUID.
-- `DELETE /api/profiles/{id}` - Remove a profile from the database.
----## 🛠️ Tech Stack & Tools- **Framework:** Next.js (App Router)- **Language:** TypeScript
-- **Database:** [Upstash Redis](https://upstash.com)
-- **Libraries:** `@upstash/redis`, `uuid` (v7)
-- **Deployment:** [Vercel](https://vercel.app)
----## ⚙️ Features- **Data Persistence:** Stores profile data using Redis Key-Value pairs and Lists for efficiency.- **UUID v7:** All profile IDs are generated using the time-sortable UUID v7 standard.- **External API Integration:** Merges and processes data from three concurrent API calls.
-- **CORS Enabled:** Mandatory `Access-Control-Allow-Origin: *` header for grading compatibility.
----## 💻 Local Setup1. **Clone the repo:**
+
+This repository contains the graduation of tasks from Stage 0 to Stage 2 of the HNG14 Backend Internship. It features a high-performance Demographic Intelligence API.
+
+---
+
+## 📂 Project Structure
+- **/hng-stage-0**: The core Next.js application containing all API stages.
+  - `GET /api/classify`: Stage 0 - Name Classification.
+  - `/api/profiles`: Stage 1 & 2 - Data Persistence & Advanced Query Engine.
+  - `/api/profiles/search`: Stage 2 - Natural Language Query Engine.
+
+---
+
+## 🛠️ Tech Stack & Tools
+- **Framework:** [Next.js](https://nextjs.org) (App Router)
+- **Language:** TypeScript
+- **Database:** [PostgreSQL](https://neon.tech) via Vercel/Neon
+- **ORM:** [Prisma v7](https://prisma.io)
+- **Deployment:** [Vercel](https://vercel.com)
+- **External APIs:** Genderize.io, Agify.io, Nationalize.io
+
+---
+
+## 📖 API Documentation
+
+### 1. Name Classifier (Stage 0)
+`GET /api/classify?name={name}`
+Classifies a name by gender with confidence metrics.
+
+### 2. Advanced Query Engine (Stage 2)
+`GET /api/profiles`
+Supports multi-parameter filtering, sorting, and pagination.
+- **Filters:** `gender`, `age_group`, `country_id`, `min_age`, `max_age`, `min_gender_probability`, `min_country_probability`.
+- **Sorting:** `sort_by` (age, created_at, gender_probability) | `order` (asc, desc).
+- **Pagination:** `page` and `limit` (max 50).
+
+### 3. Natural Language Search (Stage 2 Core)
+`GET /api/profiles/search?q={query}`
+**Example:** `/api/profiles/search?q=young males from nigeria`
+
+---
+
+## 🧠 Intelligence Query Engine (NLP)
+
+### Approach
+The search endpoint uses a **Rule-Based Tokenization** approach. It parses the natural language string using optimized Regular Expressions (Regex) to map plain English keywords into structured database filters.
+
+### Supported Keywords & Mappings
+
+| Keyword | Mapping |
+| :--- | :--- |
+| `male` / `female` | Maps to `gender` |
+| `young` | Maps to age range `16 - 24` |
+| `above {X}` / `older than {X}` | Maps to `min_age = X` |
+| `adult` / `teenager` etc. | Maps to `age_group` |
+| `from {country_name}` | Maps to `country_id` (e.g., Nigeria → NG) |
+
+### Limitations
+- **Boolean Logic:** Does not currently support complex "OR" logic (e.g., "Nigeria or Kenya").
+- **Synonyms:** Only supports exact keyword matches (e.g., "males" is supported, but "guys" is not).
+- **Language:** Currently optimized for English queries only.
+
+---
+
+## ⚙️ Features
+- **Data Seeding:** Pre-seeded with 2,026 unique intelligence profiles.
+- **UUID v7:** All record IDs follow the time-sortable version 7 UUID standard.
+- **CORS Enabled:** `Access-Control-Allow-Origin: *` for grading compatibility.
+- **High Performance:** Optimized Prisma queries with specific indexing to prevent full-table scans.
+
+---
+
+## 💻 Local Setup
+1. **Clone the repo:**
    ```bash
    git clone https://https://github.com/Goldeno10/HNG14_Internship
    cd hng-stage-0
-
-
-   1. Install dependencies:
-   
+   ```
+2. **Environment Variables:**
+   Create a `.env.local` file:
+   ```env
+   DATABASE_URL="your_prisma_pooling_url"
+   DATABASE_URL_UNPOOLED="your_direct_connection_url"
+   ```
+3. **Database Sync & Seed:**
+   ```bash
    npm install
-   
-   2. Environment Variables:
-   Create a .env.local file with your Upstash credentials:
-   
-   UPSTASH_REDIS_REST_URL="your_url"
-   UPSTASH_REDIS_REST_TOKEN="your_token"
-   
-   3. Run development server:
-   
+   npx prisma generate
+   npx prisma db seed
+   ```
+4. **Run Server:**
+   ```bash
    npm run dev
-   
-   
-------------------------------
+   ```
+
+---
+
 ## 👤 Author
+- **GitHub:** [@Goldeno10](https://github.com/Goldeno10)
 
-* GitHub: @Goldeno10
-
-------------------------------
-This repository is updated regularly as I progress through the HNG Internship tracks.
-
-
-
+---
+*Updated regularly as I progress through the HNG Internship.*
