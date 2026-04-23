@@ -74,7 +74,7 @@ The search endpoint uses a **Rule-Based Tokenization** approach. It parses the n
 ## 💻 Local Setup
 1. **Clone the repo:**
    ```bash
-   git clone https://https://github.com/Goldeno10/HNG14_Internship
+   git clone https://github.com/Goldeno10/HNG14_Internship.git
    cd hng-stage-0
    ```
 2. **Environment Variables:**
