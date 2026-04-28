@@ -50,10 +50,37 @@ export async function GET(request: Request) {
       })
     ]);
 
+    // 5. Calculate Pagination Metadata
+    const total_pages = Math.ceil(total / limit);
+    const has_next = page < total_pages;
+
     return NextResponse.json({
       status: "success",
-      page, limit, total, data
+      data,
+      pagination: {
+        total,
+        total_pages,
+        current_page: page,
+        limit,
+        has_next
+      }
     }, { headers: corsHeaders });
+
+    // // 4. Execution
+    // const [total, data] = await Promise.all([
+    //   prisma.profile.count({ where }),
+    //   prisma.profile.findMany({
+    //     where,
+    //     take: limit,
+    //     skip: skip,
+    //     orderBy: { [validatedSort]: order }
+    //   })
+    // ]);
+
+    // return NextResponse.json({
+    //   status: "success",
+    //   page, limit, total, data
+    // }, { headers: corsHeaders });
 
   } catch (error) {
     console.error("Query Error:", error);
