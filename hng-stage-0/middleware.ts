@@ -16,7 +16,7 @@ export async function middleware(req: NextRequest) {
   if (!path.startsWith('/api/profiles')) return NextResponse.next();
 
   // 1. Rate Limiting
-  const ip = req.ip ?? '127.0.0.1';
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || req.headers.get('x-real-ip') || '127.0.0.1';
   const { success } = await ratelimit.limit(ip);
   if (!success) {
     return NextResponse.json({ status: "error", message: "Rate limit exceeded" }, { status: 429 });
