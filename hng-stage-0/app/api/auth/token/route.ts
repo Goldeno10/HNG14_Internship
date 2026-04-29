@@ -73,7 +73,9 @@ export async function POST(request: Request) {
       access_token: accessToken,
       refresh_token: refreshToken,
       expires_in: 180
-    }, { headers: corsHeaders });
+    }, { 
+      status: 200,
+      headers: corsHeaders });
 
   } catch (error) {
     return NextResponse.json({ status: "error", message: "Server failure" }, { status: 500, headers: corsHeaders });

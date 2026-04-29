@@ -3,7 +3,11 @@ import prisma from '@/lib/prisma';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const corsHeaders = { 'Access-Control-Allow-Origin': '*' };
+  const corsHeaders = { 
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, X-API-Version, Authorization',
+  };
 
   try {
     // 1. Pagination (Numbers)
@@ -64,7 +68,10 @@ export async function GET(request: Request) {
         limit,
         has_next
       }
-    }, { headers: corsHeaders });
+    }, { 
+      status: 200,
+      headers: corsHeaders 
+    });
 
     // // 4. Execution
     // const [total, data] = await Promise.all([
