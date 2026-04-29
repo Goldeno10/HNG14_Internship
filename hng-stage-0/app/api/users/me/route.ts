@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { jwtVerify } from 'jose';
+import { logRequest } from '@/lib/logger'
 
 export async function GET(request: Request) {
+    const startTime = Date.now();
     const corsHeaders = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
@@ -13,6 +15,7 @@ export async function GET(request: Request) {
     const token = authHeader?.split(' ')[1];
 
     if (!token) {
+        await logRequest('GET', '/api/users/me', 401, startTime);
         return NextResponse.json({ status: "error", message: "Token required" }, { status: 401, headers: corsHeaders });
     }
 
@@ -36,15 +39,18 @@ export async function GET(request: Request) {
         });
 
         if (!user) {
+            await logRequest('GET', '/api/users/me', 404, startTime);
             return NextResponse.json({ status: "error", message: "User not found" }, { status: 404, headers: corsHeaders });
         }
 
+        await logRequest('GET', '/api/users/me', 200, startTime);
         return NextResponse.json({
             status: "success",
             data: user
         }, { status: 200, headers: corsHeaders });
 
     } catch (error) {
+        await logRequest('GET', '/api/users/me', 401, startTime);
         return NextResponse.json({ status: "error", message: "Invalid or expired token" }, { status: 401, headers: corsHeaders });
     }
 }

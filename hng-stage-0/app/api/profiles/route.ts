@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { logRequest } from '@/lib/logger'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
+  const startTime = Date.now();
+
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
@@ -57,7 +60,9 @@ export async function GET(request: Request) {
     // 5. Calculate Pagination Metadata
     const total_pages = Math.ceil(total / limit);
     const has_next = page < total_pages;
-
+    
+    await logRequest('GET', '/api/profiles', 200, startTime);
+    
     return NextResponse.json({
       status: "success",
       data,
@@ -78,9 +83,9 @@ export async function GET(request: Request) {
       status: 200,
       headers: corsHeaders
     });
-
   } catch (error) {
     console.error("Query Error:", error);
+    await logRequest('GET', '/api/profiles', 500, startTime);
     return NextResponse.json({
       status: "error",
       message: error instanceof Error ? error.message : "Server failure"

@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { Parser } from 'json2csv';
+import { logRequest } from '@/lib/logger'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const format = searchParams.get('format');
+  const startTime = Date.now();
+
   const corsHeaders = { 
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
@@ -12,6 +15,7 @@ export async function GET(request: Request) {
   };
 
   if (format !== 'csv') {
+    await logRequest('GET', '/api/profiles/export', 400, startTime);
     return NextResponse.json(
       { status: "error", message: "Invalid export format. Only 'csv' is supported." }, 
       { status: 400, headers: corsHeaders }
@@ -45,6 +49,7 @@ export async function GET(request: Request) {
     });
 
     if (profiles.length === 0) {
+      await logRequest('GET', '/api/profiles/export', 404, startTime);
       return NextResponse.json({ status: "error", message: "No data found to export" }, { status: 404, headers: corsHeaders });
     }
 
@@ -65,6 +70,8 @@ export async function GET(request: Request) {
     const json2csvParser = new Parser({ fields });
     const csv = json2csvParser.parse(profiles);
 
+    await logRequest('GET', '/api/profiles/export', 200, startTime);
+
     // 4. Return formatted array as a downloaded string
     return new NextResponse(csv, {
       status: 200,
@@ -76,6 +83,7 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
+    await logRequest('GET', '/api/profiles/export', 500, startTime);
     return NextResponse.json({ status: "error", message: "Export failed" }, { status: 500, headers: corsHeaders });
   }
 }
