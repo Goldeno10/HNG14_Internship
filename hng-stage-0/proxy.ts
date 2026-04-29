@@ -16,8 +16,7 @@ const authRates = new Ratelimit({
   limiter: Ratelimit.slidingWindow(10, '1m') // 10 auth attempts per minute
 });
 
-// 1. MUST be named 'middleware' for Next.js to intercept requests!
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
   // 2. Extract client IP safely
@@ -36,12 +35,13 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 4. API Profiles Rate Limiting
-  if (path.startsWith('/api/profiles')) {
+  // 4. API Rate Limiting for all other API routes
+  if (path.startsWith('/api/')) {
     const { success } = await ratelimit.limit(ip);
     if (!success) {
-      return NextResponse.json({ status: "error", message: "Rate limit exceeded" }, { status: 429 });
+      return NextResponse.json({ status: "error", message: "API rate limit exceeded" }, { status: 429 });
     }
+
 
     // 5. Version Check
     const version = req.headers.get('X-API-Version');
@@ -89,5 +89,5 @@ export async function middleware(req: NextRequest) {
 
 // 9. Matcher must handle both endpoint families
 export const config = { 
-  matcher: ['/api/profiles/:path*', '/auth/:path*', '/api/auth/:path*'] 
+  matcher: ['/api/:path*', '/auth/:path*', '/api/auth/:path*'] 
 };
