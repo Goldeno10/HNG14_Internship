@@ -11,7 +11,7 @@ const ratelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(60, '1m'), // 60 requests per minute
 });
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
   if (!path.startsWith('/api/profiles')) return NextResponse.next();
 

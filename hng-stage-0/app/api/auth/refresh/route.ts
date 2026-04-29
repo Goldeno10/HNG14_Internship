@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
-import { redis } from '@/lib/redis'; // Your Upstash client
+import { redis } from '@/lib/redis';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(request: Request) {
