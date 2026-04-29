@@ -3,13 +3,19 @@ import { prisma } from '@/lib/prisma';
 import jwt from 'jsonwebtoken';
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-API-Version',
+  // 1. You MUST use '*' or your exact web portal URL (e.g. http://localhost:3001)
+  'Access-Control-Allow-Origin': '*', 
+  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Version',
+  'Access-Control-Max-Age': '86400', // Caches the preflight for 24 hours
 };
 
+// 2. THIS IS THE PREFLIGHT HANDLER the browser is failing on!
 export async function OPTIONS() {
-  return NextResponse.json({}, { headers: corsHeaders });
+  return new NextResponse(null, {
+    status: 204, // 204 No Content is the standard for preflight
+    headers: corsHeaders,
+  });
 }
 
 export async function POST(request: Request) {
