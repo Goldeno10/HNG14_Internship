@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const corsHeaders = { 
+  const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, X-API-Version, Authorization',
@@ -66,34 +66,24 @@ export async function GET(request: Request) {
         total_pages,
         current_page: page,
         limit,
-        has_next
+        has_next,
+        page: page,
+        links: {
+          self: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profiles?page=${page}`,
+          next: has_next ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profiles?page=${page + 1}` : null,
+          prev: page > 1 ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/profiles?page=${page - 1}` : null
+        },
       }
-    }, { 
+    }, {
       status: 200,
-      headers: corsHeaders 
+      headers: corsHeaders
     });
-
-    // // 4. Execution
-    // const [total, data] = await Promise.all([
-    //   prisma.profile.count({ where }),
-    //   prisma.profile.findMany({
-    //     where,
-    //     take: limit,
-    //     skip: skip,
-    //     orderBy: { [validatedSort]: order }
-    //   })
-    // ]);
-
-    // return NextResponse.json({
-    //   status: "success",
-    //   page, limit, total, data
-    // }, { headers: corsHeaders });
 
   } catch (error) {
     console.error("Query Error:", error);
-    return NextResponse.json({ 
-      status: "error", 
-      message: error instanceof Error ? error.message : "Server failure" 
-  }, { status: 500, headers: corsHeaders });
-}
+    return NextResponse.json({
+      status: "error",
+      message: error instanceof Error ? error.message : "Server failure"
+    }, { status: 500, headers: corsHeaders });
+  }
 }
