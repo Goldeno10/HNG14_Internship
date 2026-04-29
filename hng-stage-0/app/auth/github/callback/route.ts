@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   // 1. If it originated from Web, send it back to your Web Portal callback
   if (state === 'web') {
     // Port 3001 is standard for the local Web Portal
-    return NextResponse.redirect(`http://localhost:3001/callback?code=${code}`);
+    return NextResponse.redirect(`https://insighta-web-swart.vercel.app/callback?code=${code}`);
   }
 
   // 2. Otherwise, fall back to the CLI flow on port 4800
