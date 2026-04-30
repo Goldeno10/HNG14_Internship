@@ -35,13 +35,6 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 4. API Rate Limiting for all other API routes
-  if (path.startsWith('/api/')) {
-    const { success } = await ratelimit.limit(ip);
-    if (!success) {
-      return NextResponse.json({ status: "error", message: "API rate limit exceeded" }, { status: 429 });
-    }
-
 
     // 5. Version Check
     const version = req.headers.get('X-API-Version');
@@ -59,6 +52,13 @@ export async function proxy(req: NextRequest) {
       const { payload } = await jwtVerify(token, secret);
       const userRole = payload.role as string;
       const userId = payload.userId as string;
+
+       // 4. API Rate Limiting for all other API routes
+    if (path.startsWith('/api/')) {
+      const { success } = await ratelimit.limit(userId);
+      if (!success) {
+        return NextResponse.json({ status: "error", message: "API rate limit exceeded" }, { status: 429 });
+      }
 
       // 7. Role-Based Access Control (RBAC)
       if (userRole === 'analyst' && (req.method === 'POST' || req.method === 'DELETE')) {
