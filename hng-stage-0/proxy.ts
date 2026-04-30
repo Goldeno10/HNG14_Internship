@@ -35,7 +35,8 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-
+  // 4. API Rate Limiting for all other API routes
+  if (path.startsWith('/api/')) {
     // 5. Version Check
     const version = req.headers.get('X-API-Version');
     if (version !== '1') {
@@ -53,8 +54,6 @@ export async function proxy(req: NextRequest) {
       const userRole = payload.role as string;
       const userId = payload.userId as string;
 
-       // 4. API Rate Limiting for all other API routes
-    if (path.startsWith('/api/')) {
       const { success } = await ratelimit.limit(userId);
       if (!success) {
         return NextResponse.json({ status: "error", message: "API rate limit exceeded" }, { status: 429 });
