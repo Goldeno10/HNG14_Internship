@@ -1,4 +1,5 @@
 import { Redis } from '@upstash/redis';
+import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 import { logRequest } from '@/lib/logger'
 
@@ -7,7 +8,9 @@ const corsHeaders = { 'Access-Control-Allow-Origin': '*' };
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const profile = await redis.get(`profile:data:${id}`);
+
+  // const profile = await redis.get(`profile:data:${id}`);
+  const profile = await prisma.profile.findUnique({ where: { id } });
   const startTime = Date.now();
 
   if (!profile) {
@@ -20,7 +23,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const profile: any = await redis.get(`profile:data:${id}`);
+  const profile: any = await prisma.profile.findUnique({ where: { id } });
   const startTime = Date.now();
   if (!profile) {
     await logRequest('DELETE', `/api/profiles/${id}`, 404, startTime);
@@ -28,9 +31,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   }
   await logRequest('DELETE', `/api/profiles/${id}`, 200, startTime);
 
-  await redis.del(`profile:data:${id}`);
-  await redis.del(`profile:name:${profile.name}`);
-  await redis.lrem('profiles:list', 0, id);
+  await prisma.profile.delete({ where: { id } });
 
   return new Response(null, { status: 204, headers: corsHeaders });
 }
