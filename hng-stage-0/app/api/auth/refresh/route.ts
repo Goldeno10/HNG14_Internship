@@ -3,8 +3,6 @@ import jwt from 'jsonwebtoken';
 import { redis } from '@/lib/redis';
 import { prisma } from '@/lib/prisma';
 
-const ACCESS_TOKEN_TTL = process.env.ACCESS_TOKEN_TTL ?? '2h';
-const REFRESH_TOKEN_TTL = process.env.REFRESH_TOKEN_TTL ?? '5h';
 
 export async function POST(request: Request) {
   try {
@@ -34,13 +32,13 @@ export async function POST(request: Request) {
     const newAccessToken = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.JWT_SECRET!,
-      { expiresIn: ACCESS_TOKEN_TTL }
+      { expiresIn: 3600 } // 1 hour in seconds
     );
 
     const newRefreshToken = jwt.sign(
       { userId: user.id },
       process.env.REFRESH_SECRET!,
-      { expiresIn: REFRESH_TOKEN_TTL }
+      { expiresIn: 18000 } // 5 hours in seconds
     );
 
     return NextResponse.json({
