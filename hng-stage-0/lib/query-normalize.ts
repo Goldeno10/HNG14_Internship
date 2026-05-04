@@ -22,6 +22,8 @@ export type NormalizedListQuery = {
 const ALLOWED_SORT = ['age', 'created_at', 'gender_probability'] as const;
 
 function roundProb(n: number): number {
+  // Round probabilities to a fixed number of decimals to 
+  //  ++ avoid tiny differences due to float parsing/coercion.
   return Math.round(n * 1e6) / 1e6;
 }
 
