@@ -4,11 +4,11 @@ import { logRequest } from '@/lib/logger'
 import { getCachedJson, profileByIdCacheKey, setCachedJson, TTL_BY_ID_SEC } from '@/lib/profile-cache';
 import { bumpProfileDataVersion } from '@/lib/profile-data-version';
 
-const corsHeaders = { 
+const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type , X-API-Version , Authorization'
-  };
+};
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -22,19 +22,19 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       return NextResponse.json(cached, { headers: corsHeaders });
     }
 
-    const rows = await prisma.profile.findMany({
-      where: { id },
-      take: 1,
-    });
 
-    if (rows.length === 0) {
+    const profile = await prisma.$queryRaw`SELECT * FROM "Profile" WHERE id = ${id}`;
+
+    if (!profile) {
       logRequest('GET', `/api/profiles/${id}`, 404, startTime);
       return NextResponse.json({ status: "error", message: "Profile not found" }, { status: 404, headers: corsHeaders });
     }
 
-    const payload = { status: "success", data: rows };
+    const payload = { status: "success", data: profile };
+
     await setCachedJson(cacheKey, payload, TTL_BY_ID_SEC);
     logRequest('GET', `/api/profiles/${id}`, 200, startTime);
+
     return NextResponse.json(payload, { headers: corsHeaders });
   } catch (e) {
     console.error(e);
@@ -47,16 +47,22 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   const { id } = await params;
   const startTime = Date.now();
 
-  const rows = await prisma.profile.findMany({
-    where: { id },
-    take: 1,
-  });
+  // const rows = await prisma.profile.findMany({
+  //   where: { id },
+  //   take: 1,
+  // });
 
-  if (rows.length === 0) {
+  // if (rows.length === 0) {
+  //   logRequest('DELETE', `/api/profiles/${id}`, 404, startTime);
+  //   return NextResponse.json({ status: "error", message: "Profile not found" }, { status: 404, headers: corsHeaders });
+  // }
+  
+  const profile = await prisma.$queryRaw`SELECT * FROM "Profile" WHERE id = ${id}`;
+
+  if (!profile) {
     logRequest('DELETE', `/api/profiles/${id}`, 404, startTime);
     return NextResponse.json({ status: "error", message: "Profile not found" }, { status: 404, headers: corsHeaders });
   }
-
   await prisma.profile.delete({ where: { id } });
   await bumpProfileDataVersion();
 
